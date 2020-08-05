@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace UwuHub
 {
-    public class ConfigUwuHub : ConfigIni
+    public class ConfigUwuHub : Uwu.Core.ConfigIni
     {
         public ConfigUwuHub() :
-            base()
+            base("UwuHub", System.Environment.MachineName, "")
         { }
     }
 }
