@@ -5,8 +5,8 @@ little classes that you need for failsafe configurability, parsing, argument lis
 
 Libraries:
 
-	- Uwu
-		-- Uwu.Core
+  o Uwu
+    -- Uwu.Core
 
 		Arglist - Command argument handling with shell style string parsing and operations
 		ConfigIni - A base class for INI initialization, loading, and saving.  Extend this to add your own application specific properties
@@ -16,10 +16,19 @@ Libraries:
 		Parse - Simplified type parsing, like TryParse(), but more convenient when using defaults in place of parsing errors
 		StringUtil - Extended string operations like TrimEnd, Dequote, ShellEscape, among others
 
-		-- Uwu.Config
+    -- Uwu.Config
 
 		IniData - A permissive INI file parser.  Provides usable configuration information even if there are a variety of syntax errors
 		IniFile - Save/Load INI files to %LOCALAPPDATA%\%APPLICATION%.ini
+		
+  o UwuNet
+    -- UwuNet
+    
+    		Registry - Protocol registry for UwuNet communications protocols
+		Message - Messages types that can be sent over UwuNet
+		OrchestrationMessage - A message containing a string.
+
+		
 
 
 
