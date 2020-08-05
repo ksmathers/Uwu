@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -60,7 +63,8 @@ namespace UwuNet
 
         public void ReceiveHeader(Marshal rx)
         {
-            mtype = (MessageType)rx.ReadInt32();
+            var _mtype = (MessageType)rx.ReadInt32();
+            Debug.Assert(_mtype == mtype);
             opts = (Options)rx.ReadInt32();
         }
 
@@ -112,22 +116,34 @@ namespace UwuNet
 
     public static class Message
     {
+        const uint SYNC = 0xBA5EBEA7;
         public static void Transmit(IOBuffer iobuf, BaseMessage msg)
         {
             Marshal tx = new Marshal(iobuf);
-            tx.WriteInt32(0);
+            tx.WriteUInt32(SYNC);
+            int waddr = iobuf.WriteOffset;
+            int msglen = 0;
+            tx.WriteInt32(msglen);
             msg.Transmit(tx);
-            int len = iobuf.Length;
+            msglen = iobuf.Length;
+            tx.PokeInt32(waddr, msglen);
         }
 
         public static BaseMessage Receive(IOBuffer iobuf)
         {
+            if (iobuf.Length < 12) return null;
+
             Marshal rx = new Marshal(iobuf);
-            int mlen = rx.PeekUInt32();
+            uint sync = (uint)rx.PeekInt32(0);
+            int mlen = rx.PeekInt32(4);
+            MessageType mtype = (MessageType)rx.PeekInt32(8);
+            if (sync != SYNC) {
+                throw new ProtocolViolationException("Bad sync");
+            }
             BaseMessage msg = null;
             if (iobuf.Length >= mlen) {
-                rx.ReadInt32();
-                MessageType mtype = (MessageType)rx.PeekInt32(0);
+                int _sync = rx.ReadInt32();
+                int _mlen = rx.ReadInt32();
                 switch (mtype) {
                     case MessageType.Orchestration:
                         msg = new OrchestrationMessage();

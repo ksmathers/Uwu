@@ -49,10 +49,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UwuMessage.cs" />
+    <Compile Include="UwuMarshal.cs" />
     <Compile Include="UwuConfigIni.cs" />
     <Compile Include="UwuIniData.cs" />
     <Compile Include="UwuArglist.cs" />
     <Compile Include="UwuInterpolate.cs" />
+    <Compile Include="UwuIOBuffer.cs" />
     <Compile Include="UwuParse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UwuFormat.cs" />
@@ -61,6 +64,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UwuNet\UwuNet.csproj">
+      <Project>{92fcc6de-1a2a-4f6d-934f-18ce84720be4}</Project>
+      <Name>UwuNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Uwu\Uwu.csproj">
       <Project>{b1c851b9-89d3-4bb1-baae-66bad04cdebd}</Project>
       <Name>Uwu</Name>

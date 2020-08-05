@@ -7,6 +7,7 @@ namespace UwuNet
     public class Marshal
     {
         IOBuffer iobuf;
+        const uint PLANE1 = 0x10000;
 
         public Marshal(IOBuffer iobuf = null)
         {
@@ -14,10 +15,15 @@ namespace UwuNet
             this.iobuf = iobuf;
         }
 
+        public IOBuffer IOBuf {
+            get { return iobuf; }
+        }
 
         public int EncodedLength(int c)
         {
-            int cval = c;
+            if (c < 0) {
+                throw new NotImplementedException("Unimplemented character range");
+            }
             if (c == 0) {
                 return 2;
             }
@@ -38,20 +44,21 @@ namespace UwuNet
 
         public int SurrogateValue(char c)
         {
-            int ival = 0;
+            uint ival = 0;
             if (Char.IsHighSurrogate(c)) {
-                ival = (c & 0x3ff) << 10;
+                ival = (((uint)(c & 0x3ff)) << 10) + PLANE1;
             } else if (Char.IsLowSurrogate(c)) {
-                ival = (c & 0x3ff) << 0;
+                ival = ((uint)(c & 0x3ff)) << 0;
             }
-            return ival;
+            return (int)ival;
         }
 
         public (char, char) SurrogatePair(int rune)
         {
-            char clow = (char)(0xdc00 + ((rune >> 0) & 0x3ff));
-            char chigh = (char)(0xd800 + ((rune >> 10) & 0x3ff));
-            return (clow, chigh);
+            uint urune = (uint)rune - PLANE1;
+            char clow = (char)(0xdc00 + ((urune >> 0) & 0x3ff));
+            char chigh = (char)(0xd800 + ((urune >> 10) & 0x3ff));
+            return (chigh, clow);
         }
 
         IEnumerable<int> NextRune(string s)
@@ -86,10 +93,7 @@ namespace UwuNet
             return ll;
         }
 
-        internal int PeekUInt32()
-        {
-            throw new NotImplementedException();
-        }
+
 
         public void WriteUTF8(int c)
         {
@@ -123,30 +127,30 @@ namespace UwuNet
 
         public int ReadUTF8()
         {
-            int a = iobuf.Read();
-            int ichar = -1;
+            uint a = iobuf.Read();
+            uint ichar = 0;
             if ((a & 0x80) == 0) {
                 ichar = a;
             }
             else if ((a & 0xE0) == 0xC0) {
-                int b = iobuf.Read();
+                uint b = iobuf.Read();
                 ichar = ((a & 0x1f) << 6) | ((b & 0x3f) << 0);
             }
             else if ((a & 0xF0) == 0xE0) {
-                int b = iobuf.Read();
-                int c = iobuf.Read();
+                uint b = iobuf.Read();
+                uint c = iobuf.Read();
                 ichar = ((a & 0x0f) << 12) | ((b & 0x3f) << 6) | ((c & 0x3f) << 0);
             }
             else if ((a & 0xF8) == 0xF0) {
-                int b = iobuf.Read();
-                int c = iobuf.Read();
-                int d = iobuf.Read();
+                uint b = iobuf.Read();
+                uint c = iobuf.Read();
+                uint d = iobuf.Read();
                 ichar = ((a & 0x03) << 18) | ((b & 0x3f) << 12) | ((c & 0x3f) << 6) | ((d & 0x3f) << 0);
             }
             else {
                 throw new NotImplementedException("Character not in implemented range");
             }
-            return ichar;
+            return (int)ichar;
         }
 
         /// <summary>
@@ -164,7 +168,7 @@ namespace UwuNet
                 var rune = ReadUTF8();
                 if (rune > 0xffff) {
                     char slow, shigh;
-                    (slow, shigh) = SurrogatePair(rune);     
+                    (shigh, slow) = SurrogatePair(rune);     
                     buf.Append(shigh);
                     buf.Append(slow);
                 } else {
@@ -188,35 +192,34 @@ namespace UwuNet
         public int ReadInt32()
         {
             byte[] buf = iobuf.Read(4);
-            return BytesToInt32(buf);
+            return (int)BytesToUInt32(buf);
         }
-
-
-
 
         public void WriteInt32(int val)
         {
-            byte[] buf = new byte[4];
-            buf[0] = (byte)((val >> 0) & 0xff);
-            buf[1] = (byte)((val >> 8) & 0xff);
-            buf[2] = (byte)((val >> 16) & 0xff);
-            buf[3] = (byte)((val >> 32) & 0xff);
+            byte[] buf = UInt32ToBytes((uint)val);
             iobuf.Write(buf);
         }
 
-        public int PeekInt32(int offset)
+        public void WriteUInt32(uint val)
+        {
+            byte[] buf = UInt32ToBytes(val);
+            iobuf.Write(buf);
+        }
+
+        public int PeekInt32(int offset=0)
         {
             byte[] buf = iobuf.Peek(offset, 4);
-            return BytesToInt32(buf);
+            return (int)BytesToUInt32(buf);
         }
 
         public void PokeInt32(int offset, int val)
         {
-            byte[] buf = Int32ToBytes(val);
+            byte[] buf = UInt32ToBytes((uint)val);
             iobuf.Poke(offset, buf);
         }
 
-        byte[] Int32ToBytes(int val)
+        byte[] UInt32ToBytes(uint val)
         {
             byte[] buf = new byte[4];
             buf[0] = (byte)((val >> 0) & 0xff);
@@ -226,9 +229,9 @@ namespace UwuNet
             return buf;
         }
 
-        int BytesToInt32(byte[] buf)
+        uint BytesToUInt32(byte[] buf)
         {
-            return (buf[0] << 0) | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+            return (uint)(buf[0] << 0) | (uint)(buf[1] << 8) | (uint)(buf[2] << 16) | (uint)(buf[3] << 24);
         }
     }
 }

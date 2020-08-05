@@ -21,6 +21,8 @@ namespace UwuNet
             data = null;
         }
 
+        public int WriteOffset { get { return wpos; } }
+
         int Quantize(int v, int q)
         {
             var nv = v + q - 1;
@@ -31,9 +33,9 @@ namespace UwuNet
         public void Extend(int nbytes)
         {
             var ll = nbytes + wpos;
-            if (ll > data.Length) {
+            if (data == null || ll > data.Length) {
                 var ndata = new byte[Quantize(ll, blocksize)];
-                data.CopyTo(ndata, 0);
+                if (data != null) data.CopyTo(ndata, 0);
                 data = ndata;
             }
         }
@@ -50,6 +52,11 @@ namespace UwuNet
             Extend(buf.Length);
             buf.CopyTo(data, wpos);
             wpos += buf.Length;
+        }
+
+        public void Write(IEnumerable<byte> buf)
+        {
+            Write(buf.ToArray());
         }
 
         public byte Read()
