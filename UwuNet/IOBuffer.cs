@@ -47,11 +47,12 @@ namespace UwuNet
             get { return wpos - rpos; }
         }
 
-        public void Write(byte[] buf)
+        public void Write(byte[] buf, int len=-1)
         {
-            Extend(buf.Length);
-            buf.CopyTo(data, wpos);
-            wpos += buf.Length;
+            if (len == -1) len = buf.Length;
+            Extend(len);
+            Array.Copy(buf, 0, data, wpos, len);
+            wpos += len;
         }
 
         public void Write(IEnumerable<byte> buf)

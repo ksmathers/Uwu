@@ -11,30 +11,22 @@ namespace UwuNet
     public interface IMessaging
     {
         /// <summary>
-        /// Sends a multicast message to all peers on the network
+        /// Sends a multicast message (OrchestrationMessage) to all peers on the network
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="msg">any string</param>
         /// <param name="opts">LAN - confine messages to 1 hop, WAN - allow messages to propagate</param>
         void SendMessage(string msg, Options opts = Options.LAN);
 
-        /// <summary>
-        /// Sends a message to a specific peer on the network
-        /// </summary>
-        /// <param name="target">app@node</param>
-        /// <param name="data"></param>
-        void Send(string target, byte[] data);
+        void SendMessage(BaseMessage msg);
 
-        void Connect(string connectTo);
+        void Connect(string connectTo = null);
+
+        void Stop();
 
         /// <summary>
         /// 
         /// </summary>
         event OrchestrationMessageHandler MessageReceived;
-
-        /// <summary>
-        /// Delivers messages to the main thread
-        /// </summary>
-        event OrchestrationMessageHandler FormMessageReceived;
     }
 
 

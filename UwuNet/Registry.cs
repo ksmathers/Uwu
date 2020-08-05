@@ -21,17 +21,21 @@ namespace UwuNet
             protocolTable.Add(prefix, creator);
         }
 
-        public IMessaging Connect(string connectString)
+        public (string, string) ParseConnectionString(string connectString)
         {
             string[] args = connectString.Split(new char[] { ':' }, 2);
             string proto = args[0];
             string connectTo = args[1];
+            return (proto, connectTo);
+        }
+
+        public IMessaging Create(string proto)
+        {
             IMessaging msgs = null;
             if (protocolTable.ContainsKey(proto)) {
                 msgs = protocolTable[proto]();
-                msgs.Connect(connectTo);
             } else {
-                throw new ArgumentOutOfRangeException($"Invalid protocol in connection string {connectString}");       
+                throw new ArgumentOutOfRangeException($"Invalid protocol in connection string {proto}");       
             }
             return msgs;
         }

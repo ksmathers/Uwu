@@ -13,15 +13,24 @@ namespace UwuNet.MCast
 {
     public class MCast : Protocol<MCast>, IMessaging
     {
-        Thread networking;
+        volatile Thread networking;
         volatile bool connected;
         volatile bool running = true;
-        Socket mcastSocket;
+        Socket s_in;
+        Socket s_out;
         const int BASE_MCAST_PORT = 19900;
+        List<BaseMessage> outbox;
+        List<BaseMessage> inbox;
 
         public event OrchestrationMessageHandler MessageReceived;
-        public event OrchestrationMessageHandler FormMessageReceived;
+        //public event OrchestrationMessageHandler FormMessageReceived;
         IPEndPoint mcastEndPoint;
+
+        public MCast()
+        {
+            inbox = new List<BaseMessage>();
+            outbox = new List<BaseMessage>();
+        }
 
         IPAddress ParseConnectString(string connectTo)
         {
@@ -42,53 +51,59 @@ namespace UwuNet.MCast
 
         public void Connect(string connectTo)
         {
-            networking = new Thread(() => { Run(connectTo); });
-            networking.Start();
-        }
-
-        public void Run(string connectTo)
-        {
             try {
-                mcastSocket = new Socket(AddressFamily.InterNetwork,
-                                         SocketType.Dgram,
-                                         ProtocolType.Udp);
-
-                //IPAddress localIPAddr = IPAddress.Parse(Console.ReadLine());
-                IPAddress localIP = IPAddress.Any;
-                IPEndPoint localEP = new IPEndPoint(IPV4Address(localIP), BASE_MCAST_PORT);
                 IPAddress mcastAddress = ParseConnectString(connectTo);
                 mcastEndPoint = new IPEndPoint(mcastAddress, BASE_MCAST_PORT);
-                mcastSocket.Bind(localEP);
-                // Define a MulticastOption object specifying the multicast group
-                // address and the local IPAddress.
-                // The multicast group address is the same as the address used by the server.
-                var mcastOption = new MulticastOption(mcastAddress, localIP);
 
-                mcastSocket.SetSocketOption(SocketOptionLevel.IP,
-                                            SocketOptionName.AddMembership,
-                                            mcastOption);
-                connected = true;
+
+                // Setup output socket
+                s_out = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                s_out.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(mcastAddress));
+                s_out.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 2);
+                
+                s_out.Connect(mcastEndPoint);
+
+                // Setup input socket
+                s_in = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                s_in.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                IPEndPoint endpoint_in = new IPEndPoint(IPAddress.Any, BASE_MCAST_PORT);
+                s_in.Bind(endpoint_in);
+                s_in.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(mcastAddress, IPAddress.Any));
+                s_in.ReceiveTimeout = 100;
+                
             } catch (Exception e) {
                 connected = false;
                 throw e;
             }
 
+            networking = new Thread(() => { Run(s_in); });
+            networking.Start();
+        }
+
+        public void Run(Socket s_svc)
+        {
+            connected = true;
+            byte[] buffer = new byte[65536];    // maximum UDP message size
             IOBuffer inbuf = new IOBuffer();
-            while (running) {
-                List<ArraySegment<byte>> buffers = new List<ArraySegment<byte>>();
-                int mrec = mcastSocket.Receive(buffers);
-                foreach (var buf in buffers) {
-                    inbuf.Write(buf.Array);
-                }
+            try {
                 while (running) {
-                    var msg = Message.Receive(inbuf);
-                    if (msg == null) break;
-                    var omsg = msg as OrchestrationMessage;
-                    if (omsg != null) {
-                        MessageReceived?.Invoke(omsg.Body, omsg.Options);
+                    int rlen = s_svc.Receive(buffer, 0, buffer.Length, SocketFlags.None, out SocketError error);
+                    if (error == SocketError.TimedOut) continue;
+                    if (error == SocketError.Success) {
+                        inbuf.Write(buffer, rlen);
+                        while (running) {
+                            var msg = Message.Receive(inbuf);
+                            if (msg == null) break;
+                            var omsg = msg as OrchestrationMessage;
+                            if (omsg != null) {
+                                MessageReceived?.Invoke(omsg.Body, omsg.Options);
+                            }
+                        }
+                        inbuf.Compress();
                     }
                 }
-                inbuf.Compress();
+            } finally {
+
             }
         }
 
@@ -99,15 +114,24 @@ namespace UwuNet.MCast
         }
     
 
-        public void Send(string target, byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SendMessage(string msg, Options opts = Options.LAN)
         {
-            byte[] buffer = ASCIIEncoding.UTF8.GetBytes(msg);
-            mcastSocket.SendTo(buffer, mcastEndPoint);
+            OrchestrationMessage xmsg = new OrchestrationMessage(msg, opts);
+            SendMessage(xmsg);
+        }
+
+        public void SendMessage(BaseMessage msg)
+        {
+            IOBuffer outbuf = new IOBuffer();
+            Message.Transmit(outbuf, msg);
+            if (outbuf.Length > 65536) {
+                // Message too long for this transport, drop it
+                Console.Error.WriteLine($"Message dropped: too long for MCast transport {outbuf.Length}");
+            } else {
+                var args = new SocketAsyncEventArgs();
+                var buf = outbuf.Read(outbuf.Length);
+                s_out.Send(buf);
+            }
         }
     }
 }

@@ -32,5 +32,15 @@ namespace UwuTest
 
             Assert.AreEqual(0, iobuf.Length);
         }
+
+        [TestMethod]
+        public void InsertSubarrayTest()
+        {
+            IOBuffer iobuf = new IOBuffer();
+            byte[] buf = new byte[65536];
+            int insertLen = 10;
+            iobuf.Write(buf, insertLen);
+            Assert.AreEqual(insertLen, iobuf.Length);
+        }
     }
 }
