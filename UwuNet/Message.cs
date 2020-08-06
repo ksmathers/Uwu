@@ -9,6 +9,10 @@ using System.Text;
 
 namespace UwuNet
 {
+    /// <summary>
+    /// Used for message propagation.  Messages that have crossed a WAN link are marked LAN so that they don't echo back 
+    /// to the originating hub.
+    /// </summary>
     [Flags]
     public enum Options
     {
@@ -17,103 +21,21 @@ namespace UwuNet
         WAN = 2
     }
 
+    /// <summary>
+    /// List of valid message types
+    /// </summary>
     public enum MessageType
     {
-        Orchestration,
+        Orchestration,          // String with peer broadcast
     }
 
-    public class BaseMessage
-    {
-        MessageType mtype;
-        Options opts;
-        int len;
 
-        public BaseMessage(MessageType mtype, Options opts)
-        {
-            this.mtype = mtype;
-            this.opts = opts;
-        }
 
-        public bool IsLan {
-            get { return (opts & Options.LAN) != 0; }
-            set {
-                if (value) { opts |= Options.LAN; }
-                else { opts &= ~Options.LAN; }
-            }
-        }
 
-        public bool IsWan {
-            get { return (opts & Options.WAN) != 0; }
-            set {
-                if (value) { opts |= Options.WAN; }
-                else { opts &= ~Options.WAN; }
-            }
-        }
 
-        public Options Options {
-            get { return opts; }
-            set { opts = value; }
-        }
-
-        public void TransmitHeader(Marshal tx)
-        {
-            tx.WriteInt32((int)mtype);
-            tx.WriteInt32((int)opts);
-        }
-
-        public void ReceiveHeader(Marshal rx)
-        {
-            var _mtype = (MessageType)rx.ReadInt32();
-            Debug.Assert(_mtype == mtype);
-            opts = (Options)rx.ReadInt32();
-        }
-
-        public virtual void Transmit(Marshal tx)
-        {
-            throw new SerializationException("Unable to serialize BaseMessage");
-        }
-
-        public virtual void Receive(Marshal rx)
-        {
-            throw new SerializationException("Unable to serialize BaseMessage");
-        }
-    }
-
-    public class OrchestrationMessage : BaseMessage
-    {
-        string body;
-
-        public OrchestrationMessage()
-            : base(MessageType.Orchestration, Options.WAN)
-        {
-            body = "";
-        }
-
-        public string Body {
-            get { return body; }
-            set { body = value; }
-        }
-
-        public OrchestrationMessage(string body, Options opts = Options.WAN)
-            : base(MessageType.Orchestration, opts)
-        {
-            //
-            this.body = body;
-        }
-
-        public override void Transmit(Marshal tx)
-        {
-            base.TransmitHeader(tx);
-            tx.WriteString(body);
-        }
-
-        public override void Receive(Marshal rx)
-        {
-            base.ReceiveHeader(rx);
-            body = rx.ReadString();
-        }
-    }
-
+    /// <summary>
+    /// A static class that acts as a message factory for receiving messages 
+    /// </summary>
     public static class Message
     {
         const uint SYNC = 0xBA5EBEA7;
@@ -153,6 +75,7 @@ namespace UwuNet
             }
             return msg;
         }
+
     }
         
 }

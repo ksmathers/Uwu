@@ -35,7 +35,7 @@
             // 
             // tbConnectTo
             // 
-            this.tbConnectTo.Location = new System.Drawing.Point(110, 29);
+            this.tbConnectTo.Location = new System.Drawing.Point(92, 21);
             this.tbConnectTo.Name = "tbConnectTo";
             this.tbConnectTo.Size = new System.Drawing.Size(168, 20);
             this.tbConnectTo.TabIndex = 0;
@@ -43,7 +43,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(38, 32);
+            this.label1.Location = new System.Drawing.Point(20, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 1;
@@ -51,7 +51,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(122, 64);
+            this.btnOK.Location = new System.Drawing.Point(93, 56);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -61,7 +61,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(203, 64);
+            this.btnCancel.Location = new System.Drawing.Point(174, 56);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 3;
@@ -73,7 +73,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(320, 106);
+            this.ClientSize = new System.Drawing.Size(293, 93);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.label1);

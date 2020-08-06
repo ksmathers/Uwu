@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 
 namespace UwuNet
 {
-    public delegate IMessaging BuildMessaging();
     public class Registry
     {
-        Dictionary<string, BuildMessaging> protocolTable;
+        public delegate IMessaging MessagingCreator();
+        Dictionary<string, MessagingCreator> protocolTable;
 
         public Registry()
         {
-            protocolTable = new Dictionary<string, BuildMessaging>();
+            protocolTable = new Dictionary<string, MessagingCreator>();
             MCast.MCast.Register(this);
         }
 
-        public void Add(string prefix, BuildMessaging creator)
+        public void Add(string prefix, MessagingCreator creator)
         {
             protocolTable.Add(prefix, creator);
         }

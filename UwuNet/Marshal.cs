@@ -4,6 +4,17 @@ using System.Text;
 
 namespace UwuNet
 {
+    /// <summary>
+    /// An adaptor for IOBuffer that attaches String and Integer serialization methods.   
+    /// 
+    /// The String serialization is done using a modified UTF8 encoding in which an ASCII NUL 
+    /// is written using two bytes so that the '0' byte can be reserved as an end of string marker.   
+    /// The UTF8 encoding is otherwise complete including code pages beyond the common multi-language
+    /// plane.
+    /// 
+    /// Integer serialization is done LSB first (Little-Endian) and 
+    /// is not aligned to word address boundaries but is packed into the IOBuffer.
+    /// </summary>
     public class Marshal
     {
         IOBuffer iobuf;
@@ -19,6 +30,11 @@ namespace UwuNet
             get { return iobuf; }
         }
 
+        /// <summary>
+        /// Returns the number of bytes needed to store a particular UTF-32 code point using our modified UTF-8 encoding
+        /// </summary>
+        /// <param name="c">a UTF-32 (20-bit) character</param>
+        /// <returns></returns>
         public int EncodedLength(int c)
         {
             if (c < 0) {
@@ -42,6 +58,12 @@ namespace UwuNet
             throw new NotImplementedException("Unimplemented character range");
         }
 
+        /// <summary>
+        /// The semi-value of a UTF-16 surrogate, which when combined with another surrogate 
+        /// can result in a UTF-32 code point.
+        /// </summary>
+        /// <param name="c">a character in the high or low surrogate range</param>
+        /// <returns>a UTF-32 rune</returns>
         public int SurrogateValue(char c)
         {
             uint ival = 0;
@@ -53,6 +75,11 @@ namespace UwuNet
             return (int)ival;
         }
 
+        /// <summary>
+        /// Returns the high and low surrogate pair that represent a UTF-32 codepoint
+        /// </summary>
+        /// <param name="rune">UTF-32 codepoint</param>
+        /// <returns>high and low surrogate pair</returns>
         public (char, char) SurrogatePair(int rune)
         {
             uint urune = (uint)rune - PLANE1;
@@ -61,6 +88,11 @@ namespace UwuNet
             return (chigh, clow);
         }
 
+        /// <summary>
+        /// Iterator for stepping through a string one UTF-32 codepoint at a time
+        /// </summary>
+        /// <param name="s">a string to iterate through</param>
+        /// <returns>the next rune in s</returns>
         IEnumerable<int> NextRune(string s)
         {
             for (int i = 0; i < s.Length; i++) {
@@ -84,6 +116,11 @@ namespace UwuNet
             }
         }
 
+        /// <summary>
+        /// Calculates the UTF-8 encoded length of a string, where C# strings are natively stored as UTF-16.
+        /// </summary>
+        /// <param name="s">the string</param>
+        /// <returns>resultant length in bytes</returns>
         public int EncodedLength(string s)
         {
             int ll = 0;
@@ -94,7 +131,10 @@ namespace UwuNet
         }
 
 
-
+        /// <summary>
+        /// Writes a single UTF-32 codepoint as a set of byte using UTF-8 encoding
+        /// </summary>
+        /// <param name="c"></param>
         public void WriteUTF8(int c)
         {
             int ival = (int)c;
@@ -125,6 +165,10 @@ namespace UwuNet
             iobuf.Write(buf);
         }
 
+        /// <summary>
+        /// Reads a set of bytes from the stream sufficient to complete a UTF-32 codepoint
+        /// </summary>
+        /// <returns>the rune</returns>
         public int ReadUTF8()
         {
             uint a = iobuf.Read();
@@ -154,7 +198,7 @@ namespace UwuNet
         }
 
         /// <summary>
-        /// Reads a zero terminatedstring from a ByteBuffer using UTF8 encoding, except that 0 is the string terminator and NUL should have been saved in two bytes
+        /// Reads a zero terminatedstring from a IOBuffer using UTF8 encoding, except that 0 is the string terminator and NUL should have been saved in two bytes
         /// </summary>
         /// <returns>String read</returns>
         public string ReadString()
@@ -189,36 +233,63 @@ namespace UwuNet
             iobuf.Write(0);
         }
 
+        /// <summary>
+        /// Reads a signed 32-bit integer from the IOBuffer
+        /// </summary>
+        /// <returns></returns>
         public int ReadInt32()
         {
             byte[] buf = iobuf.Read(4);
             return (int)BytesToUInt32(buf);
         }
 
+        /// <summary>
+        /// Writes a signed 32-bit integer to the IOBuffer
+        /// </summary>
+        /// <param name="val"></param>
         public void WriteInt32(int val)
         {
             byte[] buf = UInt32ToBytes((uint)val);
             iobuf.Write(buf);
         }
 
+        /// <summary>
+        /// Writes an unsigned 32-bit integer to the IOBuffer
+        /// </summary>
+        /// <param name="val"></param>
         public void WriteUInt32(uint val)
         {
             byte[] buf = UInt32ToBytes(val);
             iobuf.Write(buf);
         }
 
+        /// <summary>
+        /// Fetches a signed 32-bit integer from the buffer without moving the read position
+        /// </summary>
+        /// <param name="offset">relative to the current read position</param>
+        /// <returns></returns>
         public int PeekInt32(int offset=0)
         {
             byte[] buf = iobuf.Peek(offset, 4);
             return (int)BytesToUInt32(buf);
         }
 
+        /// <summary>
+        /// Writes a signed 32-bit integer to the buffer without moving the write position
+        /// </summary>
+        /// <param name="offset">in bytes relative to rpos</param>
+        /// <param name="val"></param>
         public void PokeInt32(int offset, int val)
         {
             byte[] buf = UInt32ToBytes((uint)val);
             iobuf.Poke(offset, buf);
         }
 
+        /// <summary>
+        /// Convert uint to four bytes, LSB first
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         byte[] UInt32ToBytes(uint val)
         {
             byte[] buf = new byte[4];
@@ -229,6 +300,11 @@ namespace UwuNet
             return buf;
         }
 
+        /// <summary>
+        /// Convert four bytes to uint, LSB first
+        /// </summary>
+        /// <param name="buf"></param>
+        /// <returns></returns>
         uint BytesToUInt32(byte[] buf)
         {
             return (uint)(buf[0] << 0) | (uint)(buf[1] << 8) | (uint)(buf[2] << 16) | (uint)(buf[3] << 24);
