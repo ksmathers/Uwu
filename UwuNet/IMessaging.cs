@@ -7,6 +7,7 @@ namespace UwuNet
 
 
     public delegate void OrchestrationMessageHandler(string msg, Options opts);
+    public delegate void StateChangedHandler(object sender, string newstate);
 
     public interface IMessaging
     {
@@ -23,10 +24,15 @@ namespace UwuNet
 
         void Stop();
 
+        string State {
+            get;
+        }
+
         /// <summary>
         /// 
         /// </summary>
         event OrchestrationMessageHandler MessageReceived;
+        event StateChangedHandler StateChanged;
     }
 
 

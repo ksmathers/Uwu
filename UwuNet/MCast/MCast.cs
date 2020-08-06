@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices.ComTypes;
+using System.Diagnostics.Tracing;
 
 namespace UwuNet.MCast
 {
@@ -18,18 +19,33 @@ namespace UwuNet.MCast
         volatile bool running = true;
         Socket s_in;
         Socket s_out;
+        string state = "";
         const int BASE_MCAST_PORT = 19900;
         List<BaseMessage> outbox;
         List<BaseMessage> inbox;
 
         public event OrchestrationMessageHandler MessageReceived;
+        public event StateChangedHandler StateChanged;
+
         //public event OrchestrationMessageHandler FormMessageReceived;
         IPEndPoint mcastEndPoint;
+
+        public string State { 
+            get {
+                return state;
+            } 
+        }
 
         public MCast()
         {
             inbox = new List<BaseMessage>();
             outbox = new List<BaseMessage>();
+        }
+
+        public void OnStateChanged(string newstate)
+        {
+            state = newstate;
+            StateChanged?.Invoke(this, State);
         }
 
         IPAddress ParseConnectString(string connectTo)
@@ -51,6 +67,7 @@ namespace UwuNet.MCast
 
         public void Connect(string connectTo)
         {
+            OnStateChanged("CONNECTING");
             try {
                 IPAddress mcastAddress = ParseConnectString(connectTo);
                 mcastEndPoint = new IPEndPoint(mcastAddress, BASE_MCAST_PORT);
@@ -83,6 +100,7 @@ namespace UwuNet.MCast
         public void Run(Socket s_svc)
         {
             connected = true;
+            OnStateChanged("CONNECTED");
             byte[] buffer = new byte[65536];    // maximum UDP message size
             IOBuffer inbuf = new IOBuffer();
             try {
@@ -103,13 +121,16 @@ namespace UwuNet.MCast
                     }
                 }
             } finally {
-
+                connected = false;
+                running = false;
+                OnStateChanged("ERROR");
             }
         }
 
         public void Stop()
         {
             running = false;
+            OnStateChanged("STOPPED");
             networking.Join();
         }
     
