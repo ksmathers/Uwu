@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace UwuNet
 {
     /// <summary>
-    /// Common basis for all messages sent through UwuNet.   Includes Options (for propagation control) and MessageType (for the message factory
+    /// Common base class for all messages sent through UwuNet.   Includes Options (for propagation control) and MessageType (for the message factory
     /// to use when deserializing).  The SYNC, and LEN fields precede each message but are not part of the message directly.
     /// </summary>
     public class BaseMessage
