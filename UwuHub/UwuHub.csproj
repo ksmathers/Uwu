@@ -79,6 +79,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UwuForms\UwuForms.csproj">
+      <Project>{dc63fe20-a637-4611-99c2-b0dd9e590bff}</Project>
+      <Name>UwuForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UwuNet\UwuNet.csproj">
       <Project>{5d82c85e-0cc7-40f5-948d-6b93430a67e8}</Project>
       <Name>UwuNet</Name>

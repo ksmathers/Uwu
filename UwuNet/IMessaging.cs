@@ -6,13 +6,13 @@ namespace UwuNet
 {
 
 
-    public delegate void OrchestrationMessageHandler(string msg, Options opts);
+    public delegate void GroupMessageHandler(string msg, Options opts);
     public delegate void StateChangedHandler(object sender, string newstate);
 
     public interface IMessaging
     {
         /// <summary>
-        /// Sends a multicast message (OrchestrationMessage) to all peers on the network
+        /// Sends a multicast message (GroupMessage) to all peers on the network
         /// </summary>
         /// <param name="msg">any string</param>
         /// <param name="opts">LAN - confine messages to 1 hop, WAN - allow messages to propagate</param>
@@ -45,9 +45,9 @@ namespace UwuNet
         }
 
         /// <summary>
-        /// Delivery callback for all OrchestrationMessages that are received.
+        /// Delivery callback for all GroupMessages that are received.
         /// </summary>
-        event OrchestrationMessageHandler MessageReceived;
+        event GroupMessageHandler MessageReceived;
 
         /// <summary>
         /// Callback activated when the connection state is updated.

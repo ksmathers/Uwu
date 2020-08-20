@@ -22,12 +22,18 @@ Libraries:
       * IniFile - Save/Load INI files to %LOCALAPPDATA%\%APPLICATION%.ini
 		
   * UwuNet
-    * UwuNet
     
       * Registry - Protocol registry for UwuNet communications protocols
       * Message - Messages types that can be sent over UwuNet
       * OrchestrationMessage - A message containing a string.
 
+  * UwuForms
+
+      * MessageDeliveryAgent - Adapter for IMessaging that delivers messages
+        to the main thread of a Windows.Forms.Control container (usually 
+	the main Form).  The agent is a valid Component so can be dragged
+	into the visual form editor.
+    
 		
 
 

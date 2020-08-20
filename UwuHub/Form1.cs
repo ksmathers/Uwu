@@ -40,12 +40,7 @@ namespace UwuHub
             var cxn = new FormConnectTo();
             cxn.ConnectTo = "mcast:2";
             if (cxn.ShowDialog() == DialogResult.OK) {
-                string proto, args;
-                (proto, args) = registry.ParseConnectionString(cxn.ConnectTo);
-                msgs = registry.Create(proto);
-                msgs.MessageReceived += Msgs_MessageReceived;
-                msgs.StateChanged += Msgs_StateChanged;
-                msgs.Connect(args);
+                msgs = agent.Connect(registry, cxn.ConnectTo);
             }
         }
 
@@ -75,7 +70,7 @@ namespace UwuHub
         private void Msgs_MessageReceived(string msg, Options opts)
         {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new OrchestrationMessageHandler(Msgs_MessageReceived), msg, opts);
+                this.BeginInvoke(new GroupMessageHandler(Msgs_MessageReceived), msg, opts);
                 return;
             }
             Print($"> {msg}");

@@ -24,7 +24,7 @@ namespace UwuNet.MCast
         List<BaseMessage> outbox;
         List<BaseMessage> inbox;
 
-        public event OrchestrationMessageHandler MessageReceived;
+        public event GroupMessageHandler MessageReceived;
         public event StateChangedHandler StateChanged;
 
         //public event OrchestrationMessageHandler FormMessageReceived;
