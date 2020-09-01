@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using Uwu.Core;
 using System.Xml;
+using System.Linq;
 
 namespace Uwu.Config
 {
@@ -14,6 +15,7 @@ namespace Uwu.Config
     /// </summary>
     public class IniFile
     {
+        string application;
         string default_inipath = $"%LOCALAPPDATA%\\%APPLICATION%.ini";
         string resource;
         string path;
@@ -22,6 +24,7 @@ namespace Uwu.Config
 
         public IniFile(string application, string resource = null, string inipath = null)
         {
+            this.application = application;
             vars = new Dictionary<string, string>();
             vars.Add("APPLICATION", application);
             vars.Add("RESOURCE", resource);
@@ -36,6 +39,7 @@ namespace Uwu.Config
         }
 
         public IniData Data { get { return idata; } }
+        public string Application { get { return application; } }
 
         public string GetParam(string section, string key, string defaultVal = null)
         {
@@ -51,6 +55,9 @@ namespace Uwu.Config
             return value;
         }
 
+        public IEnumerable<string> Sections {
+            get { return Data.Sections; }
+        }
 
         public void SetParam(string section, string key, string value)
         {
@@ -118,11 +125,13 @@ namespace Uwu.Config
             idata.LoadString(iniData);
         }
 
-
-
-        public string Interpolate(string instr)
+        public string Interpolate(string instr, Dictionary<string, string> localVars = null)
         {
-            return instr.Interpolate(vars);
+            var tmp = instr.Interpolate(vars);
+            if (localVars != null) {
+                tmp = tmp.Interpolate(localVars);
+            }
+            return tmp;
         }
     }
 }

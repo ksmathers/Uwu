@@ -61,6 +61,15 @@ namespace Uwu.Config
             return -1;
         }
 
+        public IEnumerable<string> Sections {
+            get {
+                for (int i = 0; i < rows.Count; i++) {
+                    var section = rows[i].AsSection();
+                    if (section != null) yield return section;
+                }
+            }
+        }
+
         public int GetKeyValueIdx(string sectionName, string keyName)
         {
             int cpos = GetSectionIdx(sectionName);

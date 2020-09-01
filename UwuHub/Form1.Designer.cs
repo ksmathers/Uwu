@@ -38,7 +38,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbScroller = new System.Windows.Forms.TextBox();
             this.tbCommand = new System.Windows.Forms.TextBox();
+            this.stripChart1 = new UwuForms.StripChart();
             this.agent = new UwuForms.MessageDeliveryAgent(this.components);
+            this.heartbeat1 = new UwuForms.Heartbeat(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -100,6 +102,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.stripChart1);
             this.panel1.Controls.Add(this.tbScroller);
             this.panel1.Controls.Add(this.tbCommand);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -130,10 +133,24 @@
             this.tbCommand.TabIndex = 0;
             this.tbCommand.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCommand_KeyDown);
             // 
+            // stripChart1
+            // 
+            this.stripChart1.CanvasHeight = 1024;
+            this.stripChart1.CanvasSize = new System.Drawing.Size(1024, 1024);
+            this.stripChart1.CanvasWidth = 1024;
+            this.stripChart1.Location = new System.Drawing.Point(247, 28);
+            this.stripChart1.Name = "stripChart1";
+            this.stripChart1.Size = new System.Drawing.Size(116, 114);
+            this.stripChart1.TabIndex = 2;
+            // 
             // agent
             // 
             this.agent.MessageReceived += new UwuNet.GroupMessageHandler(this.Msgs_MessageReceived);
             this.agent.StateChanged += new UwuNet.StateChangedHandler(this.Msgs_StateChanged);
+            // 
+            // heartbeat1
+            // 
+            this.heartbeat1.Fps = 30;
             // 
             // Form1
             // 
@@ -170,6 +187,8 @@
         private System.Windows.Forms.ToolStripStatusLabel tsslConnectionState;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private UwuForms.MessageDeliveryAgent agent;
+        private UwuForms.StripChart stripChart1;
+        private UwuForms.Heartbeat heartbeat1;
     }
 }
 

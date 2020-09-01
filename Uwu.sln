@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwuHub", "UwuHub\UwuHub.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwuForms", "UwuForms\UwuForms.csproj", "{DC63FE20-A637-4611-99C2-B0DD9E590BFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwuCloud", "UwuCloud\UwuCloud.csproj", "{118A499C-ECC7-4CB0-AF96-FD07ED6A38AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{DC63FE20-A637-4611-99C2-B0DD9E590BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC63FE20-A637-4611-99C2-B0DD9E590BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC63FE20-A637-4611-99C2-B0DD9E590BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{118A499C-ECC7-4CB0-AF96-FD07ED6A38AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{118A499C-ECC7-4CB0-AF96-FD07ED6A38AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{118A499C-ECC7-4CB0-AF96-FD07ED6A38AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{118A499C-ECC7-4CB0-AF96-FD07ED6A38AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
