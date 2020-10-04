@@ -32,19 +32,35 @@ namespace UwuForms
         {
             UpdateFrameBuffer();
             InitializeComponent();
+            pictureBox1.MouseDown += PictureBox1_MouseDown;
+            pictureBox1.MouseUp += PictureBox1_MouseUp;
+            pictureBox1.MouseClick += PictureBox1_MouseClick;
+        }
 
+        private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            OnMouseClick(e);
+        }
+
+        private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            OnMouseUp(e);
+        }
+
+        private void PictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            OnMouseDown(e);
         }
 
         /// <summary>
         /// Starts the update clock.  
         /// </summary>
-        /// <param name="fps">update rate in frames per second</param>
-        public void Start(int fps=10)
+        /// <param name="hr">heartbeat clock</param>
+        public void Start(Heartbeat hr)
         {
-            SetFrameRate(fps);
             UpdateCanvas(0);
             LastUpdateMsec = Runtime.Milliseconds;
-            Heartbeat.AddListener(UpdateCanvas);
+            hr.Update += UpdateCanvas;
         }
 
         public int CanvasWidth {
@@ -73,14 +89,6 @@ namespace UwuForms
             frames = new Bitmap[] { frame1, frame2 };
         }
 
-        public void SetFrameRate(int fps)
-        {
-            int interval = 1000 / fps;
-            if (interval < 1) interval = 1;
-            if (interval > 1000) interval = 1000;
-            timer1.Interval = interval;
-        }
-
         long LastUpdateMsec;
         public delegate void DrawCanvasHandler(object sender, Graphics g, float dt);
         public event DrawCanvasHandler DrawCanvas;
@@ -107,9 +115,5 @@ namespace UwuForms
             frameNo = (frameNo + 1) % 2;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            UpdateCanvas(0);
-        }
     }
 }

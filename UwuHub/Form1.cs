@@ -90,5 +90,10 @@ namespace UwuHub
                 msgs.SendMessage(cmd);
             }
         }
+
+        private void createRootCAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //var rootCA = new UwuCrypto.SimpleCA();
+        }
     }
 }

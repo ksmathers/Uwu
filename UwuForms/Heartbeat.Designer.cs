@@ -33,6 +33,7 @@
             // tUpdate
             // 
             this.tUpdate.Enabled = true;
+            this.tUpdate.Tick += new System.EventHandler(this.TUpdate_Tick);
 
         }
 

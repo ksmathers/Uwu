@@ -13,28 +13,34 @@ namespace UwuForms
 {
     public partial class Heartbeat : Component
     {
-        private static Heartbeat _instance;
         public delegate void UpdateHandler(float dt);
-        event UpdateHandler Update;
+        public event UpdateHandler Update;
         long lastUpdate;
-        int fps;
+        int fps=0;
 
         public int Fps {
             get { return fps; }
             set {
-                fps = value;
+                InitFps(value);
+            }
+        }
+
+        void InitFps(int newfps)
+        {
+            lastUpdate = Runtime.Milliseconds;
+            fps = newfps;
+            if (fps == 0) {
+                tUpdate.Stop();
+            } else {
                 int interval_ms = 1000 / fps;
                 tUpdate.Interval = interval_ms;
+                tUpdate.Start();
             }
         }
 
         public Heartbeat()
         {
-            lastUpdate = Runtime.Milliseconds;
             InitializeComponent();
-            tUpdate.Tick += TUpdate_Tick;
-            tUpdate.Start();
-            _instance = this;
         }
 
         private void TUpdate_Tick(object sender, EventArgs e)
@@ -49,23 +55,9 @@ namespace UwuForms
             Update?.Invoke(dt);
         }
 
-        public static void AddListener(UpdateHandler hdl)
-        {
-            if (_instance == null) throw new InvalidOperationException("can't add listener until heartbeat has been initialized");
-            _instance.Update += hdl;
-        }
-
-        public static void RemoveListener(UpdateHandler hdl)
-        {
-            _instance.Update -= hdl;
-        }
-
-
-
         public Heartbeat(IContainer container)
         {
             container.Add(this);
-
             InitializeComponent();
         }
     }

@@ -38,9 +38,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbScroller = new System.Windows.Forms.TextBox();
             this.tbCommand = new System.Windows.Forms.TextBox();
-            this.stripChart1 = new UwuForms.StripChart();
             this.agent = new UwuForms.MessageDeliveryAgent(this.components);
             this.heartbeat1 = new UwuForms.Heartbeat(this.components);
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createRootCAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -64,7 +65,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -102,7 +104,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.stripChart1);
             this.panel1.Controls.Add(this.tbScroller);
             this.panel1.Controls.Add(this.tbCommand);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -133,16 +134,6 @@
             this.tbCommand.TabIndex = 0;
             this.tbCommand.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCommand_KeyDown);
             // 
-            // stripChart1
-            // 
-            this.stripChart1.CanvasHeight = 1024;
-            this.stripChart1.CanvasSize = new System.Drawing.Size(1024, 1024);
-            this.stripChart1.CanvasWidth = 1024;
-            this.stripChart1.Location = new System.Drawing.Point(247, 28);
-            this.stripChart1.Name = "stripChart1";
-            this.stripChart1.Size = new System.Drawing.Size(116, 114);
-            this.stripChart1.TabIndex = 2;
-            // 
             // agent
             // 
             this.agent.MessageReceived += new UwuNet.GroupMessageHandler(this.Msgs_MessageReceived);
@@ -151,6 +142,21 @@
             // heartbeat1
             // 
             this.heartbeat1.Fps = 30;
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createRootCAToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // createRootCAToolStripMenuItem
+            // 
+            this.createRootCAToolStripMenuItem.Name = "createRootCAToolStripMenuItem";
+            this.createRootCAToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createRootCAToolStripMenuItem.Text = "Create RootCA";
+            this.createRootCAToolStripMenuItem.Click += new System.EventHandler(this.createRootCAToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -187,8 +193,9 @@
         private System.Windows.Forms.ToolStripStatusLabel tsslConnectionState;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private UwuForms.MessageDeliveryAgent agent;
-        private UwuForms.StripChart stripChart1;
         private UwuForms.Heartbeat heartbeat1;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createRootCAToolStripMenuItem;
     }
 }
 

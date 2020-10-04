@@ -25,8 +25,6 @@ namespace UwuForms
         {
             dots = new List<float>();
             DrawCanvas += StripChart_DrawCanvas;
-
-            Start(30);
         }
 
         private void StripChart_DrawCanvas(object sender, Graphics g, float dt)
