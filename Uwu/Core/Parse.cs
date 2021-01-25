@@ -5,6 +5,14 @@ using System.Text;
 
 namespace Uwu.Core
 {
+    /// <summary>
+    /// Helper functions for parsing basic types.  These generally function identically to the system type 
+    /// TryParse() methods except that a default value is given and returned for each failed parse, and 
+    /// boolean parsing supports extended syntax.
+    /// 
+    /// The Parse libary functions are intended for use with ConfigIni so that usable values can be supplied 
+    /// to the caller even if the INI file contains invalid or missing configuration values.
+    /// </summary>
     public class Parse
     {
         public static int Int(string sval, int defaultVal=0)

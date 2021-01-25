@@ -18,6 +18,9 @@ namespace UwuForms
         long lastUpdate;
         int fps=0;
 
+        /// <summary>
+        /// Sets the heartbeat update rate in frames per second
+        /// </summary>
         public int Fps {
             get { return fps; }
             set {
@@ -38,10 +41,15 @@ namespace UwuForms
             }
         }
 
+        /// <summary>
+        /// A heartbeat component is required to tie together any canvases or other animated controls that
+        /// are updated on a frame interval.
+        /// </summary>
         public Heartbeat()
         {
             InitializeComponent();
         }
+
 
         private void TUpdate_Tick(object sender, EventArgs e)
         {
@@ -55,6 +63,11 @@ namespace UwuForms
             Update?.Invoke(dt);
         }
 
+        /// <summary>
+        /// A heartbeat component is required to tie together any canvases or other animated controls that
+        /// are updated on a frame interval.
+        /// </summary>
+        /// <param name="container">parent component container</param>
         public Heartbeat(IContainer container)
         {
             container.Add(this);

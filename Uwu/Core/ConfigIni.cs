@@ -8,6 +8,9 @@ using Uwu.Config;
 
 namespace Uwu.Core
 {
+    /// <summary>
+    /// Base class for a configuration INI file.  Subclass and extend with accessors for your application.
+    /// </summary>
     public abstract class ConfigIni
     {
         protected static ConfigIni _instance;
@@ -27,6 +30,11 @@ namespace Uwu.Core
                 ini.ParseString(defaultConfig);
             }
             _instance = this;
+        }
+
+        public void Save()
+        {
+            ini.Save();
         }
 
         /// <summary>

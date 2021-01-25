@@ -48,12 +48,14 @@
     <Compile Include="Canvas.Designer.cs">
       <DependentUpon>Canvas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editor.cs" />
     <Compile Include="Heartbeat.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Heartbeat.Designer.cs">
       <DependentUpon>Heartbeat.cs</DependentUpon>
     </Compile>
+    <Compile Include="Keymap.cs" />
     <Compile Include="MessageDeliveryAgent.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -66,8 +68,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ScreenBuffer.cs" />
     <Compile Include="StripChart.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Terminal.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Terminal.Designer.cs">
+      <DependentUpon>Terminal.cs</DependentUpon>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -91,6 +100,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Terminal.resx">
+      <DependentUpon>Terminal.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

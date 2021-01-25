@@ -23,6 +23,16 @@ namespace UwuForms
         bool debug = true;
         int width = 1024;
         int height = 1024;
+        bool autoSize = true;
+
+        /// <summary>
+        /// When enabled (default) the painting surface of the canvas tracks the size of the control.   When disabled the painting surface can be set to a fixed resolution (default 1024x1024) and
+        /// is scaled to fit the control.
+        /// </summary>
+        public bool CanvasAutoSize {
+            get { return autoSize; }
+            set { autoSize = value; }
+        }
 
         /// <summary>
         /// Double buffered drawing canvas control with a built in timer for drawing updates.   Use the
@@ -35,6 +45,12 @@ namespace UwuForms
             pictureBox1.MouseDown += PictureBox1_MouseDown;
             pictureBox1.MouseUp += PictureBox1_MouseUp;
             pictureBox1.MouseClick += PictureBox1_MouseClick;
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (autoSize) CanvasSize = this.Size;
         }
 
         private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -53,7 +69,7 @@ namespace UwuForms
         }
 
         /// <summary>
-        /// Starts the update clock.  
+        /// Starts updating the canvas on a periodic basis.   
         /// </summary>
         /// <param name="hr">heartbeat clock</param>
         public void Start(Heartbeat hr)
@@ -63,16 +79,25 @@ namespace UwuForms
             hr.Update += UpdateCanvas;
         }
 
+        /// <summary>
+        /// Changes the width of the canvas frame buffer.  Defaults to 1024.
+        /// </summary>
         public int CanvasWidth {
             get { return width; }
             set { width = value; UpdateFrameBuffer(); }
         }
 
+        /// <summary>
+        /// Changes the height of hte canvas frame buffer.  Defaults to 1024
+        /// </summary>
         public int CanvasHeight {
             get { return height; }
             set { height = value; UpdateFrameBuffer(); }
         }
 
+        /// <summary>
+        /// Changes the size of the canvas frame buffer.   Defaults to 1024x1024.
+        /// </summary>
         public Size CanvasSize {
             get { return new Size(width, height); }
             set { 
@@ -81,6 +106,7 @@ namespace UwuForms
                 UpdateFrameBuffer();
             }
         }
+
 
         void UpdateFrameBuffer()
         {
@@ -93,6 +119,10 @@ namespace UwuForms
         public delegate void DrawCanvasHandler(object sender, Graphics g, float dt);
         public event DrawCanvasHandler DrawCanvas;
 
+        /// <summary>
+        /// Activates the DrawCanvas event
+        /// </summary>
+        /// <param name="g">Graphics2D attached to the inactive buffer</param>
         public void OnDrawCanvas(Graphics g)
         {
             int msec = Uwu.Core.Runtime.Milliseconds;
@@ -101,6 +131,9 @@ namespace UwuForms
             LastUpdateMsec = msec;
         }
 
+        /// <summary>
+        /// Activates the DrawCanvas to fill the back buffer and then flips buffers
+        /// </summary>
         public void UpdateCanvas(float dt)
         {
             var f = frames[frameNo];

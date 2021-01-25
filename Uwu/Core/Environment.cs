@@ -4,6 +4,12 @@ using System.Text;
 
 namespace Uwu.Core
 {
+    /// <summary>
+    /// A container class for accessing environment variables.   These include actual System environment
+    /// variables together with a set of meta-environment variables some of which are automatically available
+    /// like 'HOME', and 'APPDATA', and others of which can be set using SetVar().   Values set using SetVar() 
+    /// override built in values and system environment variables.
+    /// </summary>
     public class Environment
     {
         static Environment _instance;
@@ -18,9 +24,30 @@ namespace Uwu.Core
             }
         }
 
+
+
         public Environment()
         {
             vars = new Dictionary<string, string>();
+        }
+
+        /// <summary>
+        /// Sets a program internal meta-environment variable.  If the value is null then the
+        /// variable will be deleted if it exists.
+        /// </summary>
+        /// <param name="name">name</param>
+        /// <param name="value">value or null</param>
+        public void SetVar(string name, string value)
+        {
+            if (value == null) {
+                if (vars.ContainsKey(name)) vars.Remove(name);
+            } else {
+                if (vars.ContainsKey(name)) {
+                    vars[name] = value;
+                } else {
+                    vars.Add(name, value);
+                }
+            }
         }
 
         public string GetVar(string key)

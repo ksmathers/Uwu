@@ -37,6 +37,7 @@ namespace Uwu.Config
                 var row = rows[i];
                 writer.WriteLine(row.Serialize());
             }
+            writer.Close();
         }
 
         public void LoadString(string iniData)

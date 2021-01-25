@@ -67,5 +67,20 @@ namespace UwuTest
             }
             Assert.AreEqual(2, i);
         }
+
+        [TestMethod]
+        public void TestSave()
+        {
+            var path = System.IO.Path.Combine(
+                System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                "UwuTest.ini");
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+            Assert.IsFalse(System.IO.File.Exists(path));
+            var cfg = new AppConfig();
+            cfg.Save();
+            Assert.IsTrue(System.IO.File.Exists(path));
+            var fp = System.IO.File.OpenRead(path);
+            Assert.IsTrue(fp.Length > 100);
+        }
     }
 }

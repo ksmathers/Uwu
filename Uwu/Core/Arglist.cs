@@ -6,6 +6,10 @@ using System.Text;
 
 namespace Uwu.Core
 {
+    /// <summary>
+    /// An argument list with Unix command line quoted string parsing semantics.  Arguments can be removed
+    /// from the list one at a time using the Shift() method.   
+    /// </summary>
     public class Arglist
     {
         enum ParseState
@@ -22,6 +26,10 @@ namespace Uwu.Core
         const char BACKSLASH = '\\';
         const char SPACE = ' ';
 
+        /// <summary>
+        /// Parses the input string into arguments using Unix command line quoting semantics
+        /// </summary>
+        /// <param name="cmd"></param>
         public Arglist(string cmd)
         {
             args = new List<string>();
@@ -33,6 +41,10 @@ namespace Uwu.Core
             args.Add(arg);
         }
 
+        /// <summary>
+        /// Removes the next argument from the argument list
+        /// </summary>
+        /// <returns></returns>
         public string Shift()
         {
             string arg = null;
@@ -43,6 +55,11 @@ namespace Uwu.Core
             return arg;
         }
 
+        /// <summary>
+        /// Returns any arguments remaining in the list as a parseable string separated by spaces.
+        /// </summary>
+        /// <param name="sep"></param>
+        /// <returns></returns>
         public string Join(string sep=" ")
         {
             StringBuilder cmd = new StringBuilder();
@@ -147,8 +164,10 @@ namespace Uwu.Core
                         break;
                     case SPACE:
                         if (state == ParseState.Initial) {
-                            Push(arg.ToString());
-                            arg = new StringBuilder();
+                            if (arg.Length > 0) {
+                                Push(arg.ToString());
+                                arg = new StringBuilder();
+                            }
                         } else {
                             if (state == ParseState.Escaped) pstate.Pop();
                             arg.Append(c);
