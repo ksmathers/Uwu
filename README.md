@@ -44,6 +44,9 @@ Libraries:
 	to resize the buffers to your desired resolution and aspect ratio.
       * StripChart - An example use of Canvas to display a continuously scrolling 
         sine wave.
+      * Terminal - A TTY-like control for printing output to.  The underlying
+        implementation supports colors but the Print() function has no escape
+	code parsing in this version.
     
   * UwuCrypto
   
