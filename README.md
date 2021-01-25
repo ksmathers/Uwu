@@ -33,8 +33,21 @@ Libraries:
         to the main thread of a Windows.Forms.Control container (usually 
 	the main Form).  The agent is a valid Component so can be dragged
 	into the visual form editor.
+      * Heartbeat - Timer component with a heartbeat that triggers in frames
+        per second (Fps)
+      * Canvas - A double buffered image control with a DrawCanvas() event that
+        is triggered by the application Heartbeat.   Call Start(heartbeat) to 
+	begin the programmed updates.   Until Start() is called the canvas will
+	by default display an animated GIF.  The default image buffers have a
+	resolution of 1024x1024 into which you will draw.  If you are using 
+	a non-square shape for your canvas then you can use the CanvasSize property
+	to resize the buffers to your desired resolution and aspect ratio.
+      * StripChart - An example use of Canvas to display a continuously scrolling 
+        sine wave.
     
-		
+  * UwuCrypto
+  
+      * SimpleCA - PKI (X.509) Simplified Certificate Authority, for bilateral authentication.  Incomplete.
 
 
 
